@@ -5,90 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>僑港順德龍山同鄉會入會申請</title>
   <script>
-    // 內嵌 SignaturePad 庫 (保證穩定性)
+    // 內嵌 SignaturePad 庫
     !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).SignaturePad=e()}(this,(function(){"use strict";class t{constructor(t,e,i,s){if(isNaN(t)||isNaN(e))throw new Error(`Point is invalid: (${t}, ${e})`);this.x=+t,this.y=+e,this.pressure=i||0,this.time=s||Date.now()}distanceTo(t){return Math.sqrt(Math.pow(this.x-t.x,2)+Math.pow(this.y-t.y,2))}equals(t){return this.x===t.x&&this.y===t.y&&this.pressure===t.pressure&&this.time===t.time}velocityFrom(t){return this.time!==t.time?this.distanceTo(t)/(this.time-t.time):0}}class e{static fromPoints(t,i){const s=this.calculateControlPoints(t[0],t[1],t[2]).c2,n=this.calculateControlPoints(t[1],t[2],t[3]).c1;return new e(t[1],s,n,t[2],i.start,i.end)}static calculateControlPoints(e,i,s){const n=e.x-i.x,o=e.y-i.y,h=i.x-s.x,r=i.y-s.y,a=(e.x+i.x)/2,c=(e.y+i.y)/2,d=(i.x+s.x)/2,l=(i.y+s.y)/2,u=Math.sqrt(n*n+o*o),v=Math.sqrt(h*h+r*r),_=v/(u+v),p=d+(a-d)*_,m=l+(c-l)*_,g=i.x-p,w=i.y-m;return{c1:new t(a+g,c+w),c2:new t(d+g,l+w)}}constructor(t,e,i,s,n,o){this.startPoint=t,this.control2=e,this.control1=i,this.endPoint=s,this.startWidth=n,this.endWidth=o}length(){let t,e,i=0;for(let s=0;s<=10;s+=1){const n=s/10,o=this.point(n,this.startPoint.x,this.control1.x,this.control2.x,this.endPoint.x),h=this.point(n,this.startPoint.y,this.control1.y,this.control2.y,this.endPoint.y);if(s>0){const s=o-t,n=h-e;i+=Math.sqrt(s*s+n*n)}t=o,e=h}return i}point(t,e,i,s,n){return e*(1-t)*(1-t)*(1-t)+3*i*(1-t)*(1-t)*t+3*s*(1-t)*t*t+n*t*t*t}}class i{constructor(){try{this._et=new EventTarget}catch(t){this._et=document}}addEventListener(t,e,i){this._et.addEventListener(t,e,i)}dispatchEvent(t){return this._et.dispatchEvent(t)}removeEventListener(t,e,i){this._et.removeEventListener(t,e,i)}}class s extends i{constructor(t,e={}){super(),this.canvas=t,this._drawingStroke=!1,this._isEmpty=!0,this._lastPoints=[],this._data=[],this._lastVelocity=0,this._lastWidth=0,this._handleMouseDown=t=>{1===t.buttons&&this._strokeBegin(t)},this._handleMouseMove=t=>{this._strokeMoveUpdate(t)},this._handleMouseUp=t=>{1===t.buttons&&this._strokeEnd(t)},this._handleTouchStart=t=>{if(t.cancelable&&t.preventDefault(),1===t.targetTouches.length){const e=t.changedTouches[0];this._strokeBegin(e)}},this._handleTouchMove=t=>{t.cancelable&&t.preventDefault();const e=t.targetTouches[0];this._strokeMoveUpdate(e)},this._handleTouchEnd=t=>{if(t.target===this.canvas){t.cancelable&&t.preventDefault();const e=t.changedTouches[0];this._strokeEnd(e)}},this._handlePointerStart=t=>{t.preventDefault(),this._strokeBegin(t)},this._handlePointerMove=t=>{this._strokeMoveUpdate(t)},this._handlePointerEnd=t=>{this._drawingStroke&&(t.preventDefault(),this._strokeEnd(t))},this.velocityFilterWeight=e.velocityFilterWeight||.7,this.minWidth=e.minWidth||.5,this.maxWidth=e.maxWidth||2.5,this.throttle="throttle"in e?e.throttle:16,this.minDistance="minDistance"in e?e.minDistance:5,this.dotSize=e.dotSize||0,this.penColor=e.penColor||"black",this.backgroundColor=e.backgroundColor||"rgba(0,0,0,0)",this.compositeOperation=e.compositeOperation||"source-over",this._strokeMoveUpdate=this.throttle?function(t,e=250){let i,s,n,o=0,h=null;const r=()=>{o=Date.now(),h=null,i=t.apply(s,n),h||(s=null,n=[])};return function(...a){const c=Date.now(),d=e-(c-o);return s=this,n=a,d<=0||d>e?(h&&(clearTimeout(h),h=null),o=c,i=t.apply(s,n),h||(s=null,n=[])):h||(h=window.setTimeout(r,d)),i}}(s.prototype._strokeUpdate,this.throttle):s.prototype._strokeUpdate,this._ctx=t.getContext("2d"),this.clear(),this.on()}clear(){const{_ctx:t,canvas:e}=this;t.fillStyle=this.backgroundColor,t.clearRect(0,0,e.width,e.height),t.fillRect(0,0,e.width,e.height),this._data=[],this._reset(this._getPointGroupOptions()),this._isEmpty=!0}fromDataURL(t,e={}){return new Promise(((i,s)=>{const n=new Image,o=e.ratio||window.devicePixelRatio||1,h=e.width||this.canvas.width/o,r=e.height||this.canvas.height/o,a=e.xOffset||0,c=e.yOffset||0;this._reset(this._getPointGroupOptions()),n.onload=()=>{this._ctx.drawImage(n,a,c,h,r),i()},n.onerror=t=>{s(t)},n.crossOrigin="anonymous",n.src=t,this._isEmpty=!1}))}toDataURL(t="image/png",e){return"image/svg+xml"===t?("object"!=typeof e&&(e=void 0),`data:image/svg+xml;base64,${btoa(this.toSVG(e))}`):("number"!=typeof e&&(e=void 0),this.canvas.toDataURL(t,e))}on(){this.canvas.style.touchAction="none",this.canvas.style.msTouchAction="none",this.canvas.style.userSelect="none";const t=/Macintosh/.test(navigator.userAgent)&&"ontouchstart"in document;window.PointerEvent&&!t?this._handlePointerEvents():(this._handleMouseEvents(),"ontouchstart"in window&&this._handleTouchEvents())}off(){this.canvas.style.touchAction="auto",this.canvas.style.msTouchAction="auto",this.canvas.style.userSelect="auto",this.canvas.removeEventListener("pointerdown",this._handlePointerStart),this.canvas.removeEventListener("pointermove",this._handlePointerMove),this.canvas.ownerDocument.removeEventListener("pointerup",this._handlePointerEnd),this.canvas.removeEventListener("mousedown",this._handleMouseDown),this.canvas.removeEventListener("mousemove",this._handleMouseMove),this.canvas.ownerDocument.removeEventListener("mouseup",this._handleMouseUp),this.canvas.removeEventListener("touchstart",this._handleTouchStart),this.canvas.removeEventListener("touchmove",this._handleTouchMove),this.canvas.removeEventListener("touchend",this._handleTouchEnd)}isEmpty(){return this._isEmpty}fromData(t,{clear:e=!0}={}){e&&this.clear(),this._fromData(t,this._drawCurve.bind(this),this._drawDot.bind(this)),this._data=this._data.concat(t)}toData(){return this._data}_getPointGroupOptions(t){return{penColor:t&&"penColor"in t?t.penColor:this.penColor,dotSize:t&&"dotSize"in t?t.dotSize:this.dotSize,minWidth:t&&"minWidth"in t?t.minWidth:this.minWidth,maxWidth:t&&"maxWidth"in t?t.maxWidth:this.maxWidth,velocityFilterWeight:t&&"velocityFilterWeight"in t?t.velocityFilterWeight:this.velocityFilterWeight,compositeOperation:t&&"compositeOperation"in t?t.compositeOperation:this.compositeOperation}}_strokeBegin(t){if(!this.dispatchEvent(new CustomEvent("beginStroke",{detail:t,cancelable:!0})))return;this._drawingStroke=!0;const e=this._getPointGroupOptions(),i=Object.assign(Object.assign({},e),{points:[]});this._data.push(i),this._reset(e),this._strokeUpdate(t)}_strokeUpdate(t){if(!this._drawingStroke)return;if(0===this._data.length)return void this._strokeBegin(t);this.dispatchEvent(new CustomEvent("beforeUpdateStroke",{detail:t}));const e=t.clientX,i=t.clientY,s=void 0!==t.pressure?t.pressure:void 0!==t.force?t.force:0,n=this._createPoint(e,i,s),o=this._data[this._data.length-1],h=o.points,r=h.length>0&&h[h.length-1],a=!!r&&n.distanceTo(r)<=this.minDistance,c=this._getPointGroupOptions(o);if(!r||!r||!a){const t=this._addPoint(n,c);r?t&&this._drawCurve(t,c):this._drawDot(n,c),h.push({time:n.time,x:n.x,y:n.y,pressure:n.pressure})}this.dispatchEvent(new CustomEvent("afterUpdateStroke",{detail:t}))}_strokeEnd(t){this._drawingStroke&&(this._strokeUpdate(t),this._drawingStroke=!1,this.dispatchEvent(new CustomEvent("endStroke",{detail:t})))}_handlePointerEvents(){this._drawingStroke=!1,this.canvas.addEventListener("pointerdown",this._handlePointerStart),this.canvas.addEventListener("pointermove",this._handlePointerMove),this.canvas.ownerDocument.addEventListener("pointerup",this._handlePointerEnd)}_handleMouseEvents(){this._drawingStroke=!1,this.canvas.addEventListener("mousedown",this._handleMouseDown),this.canvas.addEventListener("mousemove",this._handleMouseMove),this.canvas.ownerDocument.addEventListener("mouseup",this._handleMouseUp)}_handleTouchEvents(){this.canvas.addEventListener("touchstart",this._handleTouchStart),this.canvas.addEventListener("touchmove",this._handleTouchMove),this.canvas.addEventListener("touchend",this._handleTouchEnd)}_reset(t){this._lastPoints=[],this._lastVelocity=0,this._lastWidth=(t.minWidth+t.maxWidth)/2,this._ctx.fillStyle=t.penColor,this._ctx.globalCompositeOperation=t.compositeOperation}_createPoint(e,i,s){const n=this.canvas.getBoundingClientRect();return new t(e-n.left,i-n.top,s,(new Date).getTime())}_addPoint(t,i){const{_lastPoints:s}=this;if(s.push(t),s.length>2){3===s.length&&s.unshift(s[0]);const t=this._calculateCurveWidths(s[1],s[2],i),n=e.fromPoints(s,t);return s.shift(),n}return null}_calculateCurveWidths(t,e,i){const s=i.velocityFilterWeight*e.velocityFrom(t)+(1-i.velocityFilterWeight)*this._lastVelocity,n=this._strokeWidth(s,i),o={end:n,start:this._lastWidth};return this._lastVelocity=s,this._lastWidth=n,o}_strokeWidth(t,e){return Math.max(e.maxWidth/(t+1),e.minWidth)}_drawCurveSegment(t,e,i){const s=this._ctx;s.moveTo(t,e),s.arc(t,e,i,0,2*Math.PI,!1),this._isEmpty=!1}_drawCurve(t,e){const i=this._ctx,s=t.endWidth-t.startWidth,n=2*Math.ceil(t.length());i.beginPath(),i.fillStyle=e.penColor;for(let i=0;i<n;i+=1){const o=i/n,h=o*o,r=h*o,a=1-o,c=a*a,d=c*a;let l=d*t.startPoint.x;l+=3*c*o*t.control1.x,l+=3*a*h*t.control2.x,l+=r*t.endPoint.x;let u=d*t.startPoint.y;u+=3*c*o*t.control1.y,u+=3*a*h*t.control2.y,u+=r*t.endPoint.y;const v=Math.min(t.startWidth+r*s,e.maxWidth);this._drawCurveSegment(l,u,v)}i.closePath(),i.fill()}_drawDot(t,e){const i=this._ctx,s=e.dotSize>0?e.dotSize:(e.minWidth+e.maxWidth)/2;i.beginPath(),this._drawCurveSegment(t.x,t.y,s),i.closePath(),i.fillStyle=e.penColor,i.fill()}_fromData(e,i,s){for(const n of e){const{points:e}=n,o=this._getPointGroupOptions(n);if(e.length>1)for(let s=0;s<e.length;s+=1){const n=e[s],h=new t(n.x,n.y,n.pressure,n.time);0===s&&this._reset(o);const r=this._addPoint(h,o);r&&i(r,o)}else this._reset(o),s(e[0],o)}}toSVG({includeBackgroundColor:t=!1}={}){const e=this._data,i=Math.max(window.devicePixelRatio||1,1),s=this.canvas.width/i,n=this.canvas.height/i,o=document.createElementNS("http://www.w3.org/2000/svg","svg");if(o.setAttribute("xmlns","http://www.w3.org/2000/svg"),o.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink"),o.setAttribute("viewBox",`0 0 ${s} ${n}`),o.setAttribute("width",s.toString()),o.setAttribute("height",n.toString()),t&&this.backgroundColor){const t=document.createElement("rect");t.setAttribute("width","100%"),t.setAttribute("height","100%"),t.setAttribute("fill",this.backgroundColor),o.appendChild(t)}return this._fromData(e,((t,{penColor:e})=>{const i=document.createElement("path");if(!(isNaN(t.control1.x)||isNaN(t.control1.y)||isNaN(t.control2.x)||isNaN(t.control2.y))){const s=`M ${t.startPoint.x.toFixed(3)},${t.startPoint.y.toFixed(3)} C ${t.control1.x.toFixed(3)},${t.control1.y.toFixed(3)} ${t.control2.x.toFixed(3)},${t.control2.y.toFixed(3)} ${t.endPoint.x.toFixed(3)},${t.endPoint.y.toFixed(3)}`;i.setAttribute("d",s),i.setAttribute("stroke-width",(2.25*t.endWidth).toFixed(3)),i.setAttribute("stroke",e),i.setAttribute("fill","none"),i.setAttribute("stroke-linecap","round"),o.appendChild(i)}}),((t,{penColor:e,dotSize:i,minWidth:s,maxWidth:n})=>{const h=document.createElement("circle"),r=i>0?i:(s+n)/2;h.setAttribute("r",r.toString()),h.setAttribute("cx",t.x.toString()),h.setAttribute("cy",t.y.toString()),h.setAttribute("fill",e),o.appendChild(h)})),o.outerHTML}}return s}));
   </script>
   
   <style>
-    /* 這裡保留您提供的所有 CSS 樣式 */
     body { background-color: #fcc7bd; font-family: 'Roboto', 'Google Sans', Helvetica, Arial, sans-serif; padding: 20px; margin: 0; overflow-x: hidden; }
     .container { max-width: 640px; width: 100%; margin: 0 auto; background: white; border-radius: 8px; border-top: 15px solid #f55f41; padding: 30px; box-sizing: border-box; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
     #header-image { width: 100%; height: auto; display: block; margin-bottom: 30px; border-radius: 4px; border: 1px solid #e0e0e0; }
     h2 { color: #202124; font-size: 32px; margin: 20px 0; font-weight: 500; text-align: center; }
     .description { font-size: 18px; color: #202124; margin-bottom: 30px; line-height: 1.6; text-align: center; }
-    .form-group { margin-bottom: 30px; padding: 20px; border: 1px solid #dadce0; border-radius: 8px; background-color: #fff; transition: box-shadow 0.3s, border 0.3s; }
-    .form-group:focus-within { border-left: 6px solid #f55f41; padding-left: 14px; }
-    @keyframes flash-error { 0% { border: 1px solid #dadce0; } 50% { border: 3px solid #d93025; box-shadow: 0 0 10px rgba(217, 48, 37, 0.7); } 100% { border: 1px solid #dadce0; } }
-    .form-group.error-flash { animation: flash-error 1.5s 2; }
+
+    /* Form Group 閃爍提示 */
+    .form-group { margin-bottom: 30px; padding: 20px; border: 1px solid #dadce0; border-radius: 8px; background-color: #fff; transition: all 0.3s; }
+    @keyframes flash-error { 0% { border-color: #dadce0; } 50% { border-color: #d93025; background-color: #fff2f2; box-shadow: 0 0 10px rgba(217, 48, 37, 0.5); } 100% { border-color: #dadce0; } }
+    .error-flash { animation: flash-error 1s ease-in-out 3; border-width: 2px !important; }
+
     label { font-size: 22px; display: block; margin-bottom: 10px; font-weight: 500;}
     .required-label:after { content: " *"; color: #d93025; font-size: 24px; }
-    input[type="text"], input[type="tel"], input[type="email"], input[type="number"] { width: 100%; padding: 10px 0; border: none; border-bottom: 1px dotted #999; font-size: 20px; outline:none;}
-    .radio-group label, .checkbox-group label { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; width: 100%; }
-    .radio-group input, .checkbox-group input { margin-right: 15px; width: 24px; height: 24px; accent-color: #9b3d2a; }
+    input[type="text"], input[type="tel"], input[type="email"], input[type="number"] { width: 100%; padding: 10px 0; border: none; border-bottom: 1px dotted #999; font-size: 20px; outline:none; }
+    
+    /* 垂直排列選項 */
+    .radio-group label, .checkbox-group label { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; width: 100%; font-weight: normal;}
+    .radio-group input, .checkbox-group input { margin-right: 15px; width: 26px; height: 26px; accent-color: #9b3d2a; flex-shrink: 0;}
+    
     .date-input-wrapper { display: flex; justify-content: space-between; align-items: center; }
     .date-box { text-align: center; width: 30%; }
-    .date-box input { width: 100%; text-align: center; border: none; border-bottom: 1px solid #999; font-size: 20px; padding: 5px 0;}
+    .date-box input { width: 100%; text-align: center; border: none; border-bottom: 1px solid #999; font-size: 20px; padding: 5px 0; }
     .signature-pad-wrapper { border: 2px solid #dadce0; border-radius: 4px; background-color: #fffaf0; position: relative; height: 250px; width: 100%; }
     canvas { width: 100%; height: 100%; display: block; touch-action: none; }
-    button[type="button"].submit-btn { width: 100%; max-width: 250px; padding: 15px; background-color: #9b3d2a; color: white; border: none; border-radius: 4px; font-size: 22px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+    button.submit-btn { width: 100%; max-width: 300px; padding: 18px; background-color: #9b3d2a; color: white; border: none; border-radius: 8px; font-size: 24px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    button.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
     .clear-btn { color: #9b3d2a; border: none; background: none; font-weight: bold; padding: 10px 0; font-size: 18px; cursor: pointer; float: right; }
-    .fee-notice { font-size: 20px; font-weight: bold; margin: 30px 0; line-height: 1.4; }
-    .privacy-note { font-size: 16px; color: #666; margin-top: 20px; line-height: 1.5; border-top: 1px solid #eee; padding-top: 15px; }
+    .fee-notice { font-size: 20px; font-weight: bold; margin: 30px 0; line-height: 1.4; color: #b22222; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <img id="header-image" src="https://hklongshan.github.io/LSruhui/banner.jpg" alt="Banner"> <h2>僑港順德龍山同鄉會</h2>
-  <div class="description">
-    入會申請表格<br>
-    <span style="font-size: 16px;">承蒙您的關注與支持，實乃本會之幸。謹向您致以最誠摯的感謝。</span><br>
-    <span style="font-size: 16px;">請填寫以下資料，<span style="color: red;">*</span> 為必填</span>
-  </div>
+  <img id="header-image" src="https://hklongshan.github.io/LSruhui/banner.jpg" alt="Banner">
+  
+  <h2>僑港順德龍山同鄉會</h2>
+  <div class="description">入會申請表格<br><span style="color: red;">*</span> 為必填項目</div>
   
   <form id="memberForm">
-    <div class="form-group"><label>介紹人</label><input type="text" name="referrer" placeholder="介紹人姓名"></div>
-    <div class="form-group"><label class="required-label">申請人姓名：中文</label><input type="text" name="name_zh" required placeholder="中文姓名"></div>
-    <div class="form-group"><label>申請人姓名：英文</label><input type="text" name="name_en" placeholder="English Name"></div>
+    <div class="form-group" id="group-referrer"><label>介紹人</label><input type="text" name="referrer"></div>
     
-    <div class="form-group"><label class="required-label">性別</label>
+    <div class="form-group" id="group-name_zh"><label class="required-label">中文姓名</label><input type="text" name="name_zh" required></div>
+    <div class="form-group" id="group-name_en"><label>英文姓名</label><input type="text" name="name_en"></div>
+    
+    <div class="form-group" id="group-gender"><label class="required-label">性別</label>
       <div class="radio-group">
         <label><input type="radio" name="gender" value="男" required> 男</label>
         <label><input type="radio" name="gender" value="女"> 女</label>
       </div>
     </div>
     
-    <div class="form-group"><label class="required-label">年齡</label><input type="number" name="age" required min="1" placeholder="年齡"></div>
+    <div class="form-group" id="group-age"><label class="required-label">年齡</label><input type="number" name="age" required></div>
     
-    <div class="form-group" id="dob-group">
+    <div class="form-group" id="group-dob">
       <label class="required-label">出生日期 (年/月/日)</label>
       <div class="date-input-wrapper">
-        <div class="date-box"><input type="number" id="dob_year" placeholder="YYYY" oninput="limitLen(this, 4)"><div style="font-size:14px; color:#666;">年</div></div>
-        <div class="date-split">/</div>
-        <div class="date-box"><input type="number" id="dob_month" placeholder="MM" oninput="limitLen(this, 2)"><div style="font-size:14px; color:#666;">月</div></div>
-        <div class="date-split">/</div>
-        <div class="date-box"><input type="number" id="dob_day" placeholder="DD" oninput="limitLen(this, 2)"><div style="font-size:14px; color:#666;">日</div></div>
+        <div class="date-box"><input type="number" id="dob_y" placeholder="YYYY"><div style="font-size:12px;">年</div></div>
+        <div class="date-box"><input type="number" id="dob_m" placeholder="MM"><div style="font-size:12px;">月</div></div>
+        <div class="date-box"><input type="number" id="dob_d" placeholder="DD"><div style="font-size:12px;">日</div></div>
       </div>
       <input type="hidden" name="dob" id="dob_hidden">
     </div>
 
-    <div class="form-group"><label class="required-label">身份證號碼/護照號碼</label><input type="text" name="id_passport" required placeholder="證件號碼"></div>
-    <div class="form-group"><label class="required-label">籍貫/國籍</label><input type="text" name="native_country" required placeholder="籍貫"></div>
-    <div class="form-group"><label>職業</label><input type="text" name="occupation" placeholder="職業"></div>
+    <div class="form-group" id="group-id"><label class="required-label">身份證/護照號碼</label><input type="text" name="id_passport" required></div>
+    <div class="form-group" id="group-native"><label class="required-label">籍貫/國籍</label><input type="text" name="native_country" required></div>
+    <div class="form-group"><label>職業</label><input type="text" name="occupation"></div>
     
-    <div class="form-group"><label>婚姻狀況</label>
+    <div class="form-group" id="group-marital"><label>婚姻狀況</label>
       <div class="radio-group">
-        <label><input type="radio" name="marital_status" value="未婚/單身 (Single)"> 未婚/單身</label>
-        <label><input type="radio" name="marital_status" value="已婚 (Married)"> 已婚</label>
-        <label><input type="radio" name="marital_status" value="離婚 (Divorced)"> 離婚</label>
-        <label><input type="radio" name="marital_status" value="分居 (Separated)"> 分居</label>
-        <label><input type="radio" name="marital_status" value="喪偶 (Widowed)"> 喪偶</label>
+        <label><input type="radio" name="marital_status" value="未婚/單身"> 未婚/單身</label>
+        <label><input type="radio" name="marital_status" value="已婚"> 已婚</label>
+        <label><input type="radio" name="marital_status" value="離婚"> 離婚</label>
+        <label><input type="radio" name="marital_status" value="分居"> 分居</label>
+        <label><input type="radio" name="marital_status" value="喪偶"> 喪偶</label>
       </div>
     </div>
     
-    <div class="form-group"><label class="required-label">地址</label><input type="text" name="address" required placeholder="通訊地址"></div>
-    <div class="form-group"><label class="required-label">電話</label><input type="tel" name="phone" required placeholder="聯絡電話"></div>
-    <div class="form-group"><label>電郵地址</label><input type="email" name="email" placeholder="Email"></div>
+    <div class="form-group" id="group-address"><label class="required-label">地址</label><input type="text" name="address" required></div>
+    <div class="form-group" id="group-phone"><label class="required-label">電話</label><input type="tel" name="phone" required></div>
+    <div class="form-group"><label>電郵</label><input type="email" name="email"></div>
   
     <div class="form-group"><label>通訊軟體偏好</label>
       <div class="radio-group">
@@ -98,126 +99,122 @@
       </div>
     </div>
 
-    <div class="form-group"><label class="required-label">是否已登記為選民</label>
+    <div class="form-group" id="group-voter"><label class="required-label">是否已登記為選民</label>
       <div class="radio-group">
         <label><input type="radio" name="is_voter" value="是" required> 是</label>
         <label><input type="radio" name="is_voter" value="否"> 否</label>
       </div>
     </div>
     
-    <div class="form-group" style="border: none; background: none; padding-left: 0;">
-        <p class="fee-notice"><u>永遠入會會費100港元，<br>請前往秘書處繳付會費激活會員資格。</u></p>
-        <p style="font-size: 18px; color: #202124;">如獲接納為僑港順德龍山同鄉會會員，本人願意接受及遵守貴會會章和所頒布的一切條款與通告。若本人退出貴會，本人願意交還會員證書及即時繳還一切欠付貴會之有關費用。</p>
-    </div>
+    <div class="fee-notice">永遠入會會費100港元，請前往秘書處繳付。</div>
     
-    <div class="form-group">
+    <div class="form-group" id="group-decl">
       <div class="checkbox-group">
-        <label class="required-label"><input type="checkbox" name="declaration" required value="確認同意">確認以上填寫資料均屬實，並同意加入同鄉會</label>
+        <label class="required-label"><input type="checkbox" name="declaration" required> 確認填寫資料屬實並同意入會條款</label>
       </div>
     </div>
     
-    <div class="form-group">
+    <div class="form-group" id="group-sig">
       <label class="required-label">本人簽署</label>
-      <div style="font-size: 16px; color: #666; margin-bottom: 10px;">請在下方框內手寫簽名：</div>
       <div class="signature-pad-wrapper"><canvas id="sig-canvas"></canvas></div>
       <button type="button" class="clear-btn" onclick="signaturePad.clear()">清除重寫</button>
       <input type="hidden" name="signature" id="signature">
     </div>
 
-    <div class="privacy-note"><b>個人資料收集聲明：</b><br>您所提供的個人資料僅用於僑港順德龍山同鄉會處理入會申請、會員聯絡及會務推廣之用。</div>
-
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <button type="button" class="submit-btn" onclick="submitForm(this)">提交</button>
-        <div id="progress" style="color: #666; font-size: 18px; display: none; margin-top: 15px;">正在處理，請稍候...</div>
+    <div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 50px;">
+        <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">提交申請</button>
+        <div id="msg" style="margin-top: 15px; font-weight: bold; color: #666;"></div>
     </div>
   </form>
 </div>
 
 <script>
-  // --- 基礎邏輯 ---
-  function flashElement(el) { el.classList.add('error-flash'); setTimeout(() => { el.classList.remove('error-flash'); }, 3000); }
-  function limitLen(field, maxChar){ if(field.value.length > maxChar){ field.value = field.value.slice(0, maxChar); } }
-  
-  // --- 簽名板 ---
-  var canvas = document.getElementById('sig-canvas');
-  var signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgba(255, 255, 255, 0)', penColor: 'rgb(0, 0, 0)', minWidth: 1, maxWidth: 2.5 });
+  // 1. 初始化簽名板
+  const canvas = document.getElementById('sig-canvas');
+  const signaturePad = new SignaturePad(canvas);
   function resizeCanvas() {
-      var ratio = Math.max(window.devicePixelRatio || 1, 1);
-      var wrapper = document.querySelector('.signature-pad-wrapper');
-      canvas.width = wrapper.offsetWidth * ratio;
-      canvas.height = wrapper.offsetHeight * ratio;
-      canvas.getContext("2d").scale(ratio, ratio);
-      signaturePad.clear(); 
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear();
   }
   window.addEventListener("resize", resizeCanvas);
   setTimeout(resizeCanvas, 500);
 
-  // --- 日期處理 ---
-  function processDate() {
-      var y = document.getElementById('dob_year').value;
-      var m = document.getElementById('dob_month').value;
-      var d = document.getElementById('dob_day').value;
-      if(!y || !m || !d) return false;
-      m = m.toString().padStart(2, '0');
-      d = d.toString().padStart(2, '0');
-      document.getElementById('dob_hidden').value = y + "/" + m + "/" + d;
-      return true;
+  // 2. 閃爍提醒邏輯
+  function flashError(groupId) {
+    const el = document.getElementById(groupId);
+    if(el) {
+        el.classList.remove('error-flash');
+        void el.offsetWidth; // 觸發重繪
+        el.classList.add('error-flash');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
-  // --- 提交表單 (核心修改：fetch 模式) ---
-  function submitForm(btn) {
-    var form = document.getElementById("memberForm");
-    if(!processDate()) { alert("請完整填寫出生日期。"); var g = document.getElementById('dob-group'); flashElement(g); g.scrollIntoView({behavior:'smooth', block:'center'}); return; }
-    if (signaturePad.isEmpty()) { alert("請在簽名框內手寫簽名。"); var g = canvas.closest('.form-group'); flashElement(g); g.scrollIntoView({behavior:'smooth', block:'center'}); return; }
+  // 3. 提交邏輯
+  async function submitForm() {
+    const form = document.getElementById('memberForm');
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('submitBtn');
 
-    // 檢查必填項
-    var reqs = form.querySelectorAll('[required]');
-    for (var i = 0; i < reqs.length; i++) {
-        var el = reqs[i];
-        if (el.type !== 'radio' && el.type !== 'checkbox') {
-            if (!el.value) { alert("請填寫必填欄位。"); var g = el.closest('.form-group'); if(g) flashElement(g); el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); return; }
+    // A. 驗證日期
+    const y = document.getElementById('dob_y').value;
+    const m = document.getElementById('dob_m').value;
+    const d = document.getElementById('dob_d').value;
+    if(!y || !m || !d) { alert("請填寫出生日期"); flashError('group-dob'); return; }
+    document.getElementById('dob_hidden').value = `${y}/${m}/${d}`;
+
+    // B. 驗證所有 required 的輸入框
+    const requireds = form.querySelectorAll('[required]');
+    for(let el of requireds) {
+        if(el.type === 'radio') {
+            if(!form.querySelector(`input[name="${el.name}"]:checked`)) {
+                alert("請填寫必填項"); flashError(el.closest('.form-group').id); return;
+            }
+        } else if(el.type === 'checkbox') {
+            if(!el.checked) { alert("請勾選確認聲明"); flashError('group-decl'); return; }
+        } else if(!el.value) {
+            alert("請填寫必填項"); flashError(el.closest('.form-group').id); el.focus(); return;
         }
     }
-    // 檢查 Radio/Checkbox 組
-    var groupNames = ["gender", "is_voter", "declaration"];
-    for(var name of groupNames){
-        if(!form.querySelector(`input[name="${name}"]:checked`) && name !== "declaration"){
-            alert("請選擇必填選項。"); var g = form.querySelector(`input[name="${name}"]`).closest('.form-group'); flashElement(g); g.scrollIntoView({behavior:'smooth'}); return;
-        }
-        if(name === "declaration" && !form.querySelector('input[name="declaration"]').checked){
-            alert("請勾選確認聲明。"); flashElement(form.querySelector('input[name="declaration"]').closest('.form-group')); return;
-        }
-    }
 
-    // 通過驗證 -> 發送
-    btn.style.display = "none";
-    document.getElementById("progress").style.display = "block";
-    
-    var signatureData = signaturePad.toDataURL("image/png");
-    var formData = new FormData(form);
-    var obj = Object.fromEntries(formData.entries());
-    obj.signature = signatureData; // 確保簽名數據被加入
+    // C. 驗證簽名
+    if(signaturePad.isEmpty()) { alert("請簽名"); flashError('group-sig'); return; }
+    document.getElementById('signature').value = signaturePad.toDataURL();
 
-    // ⚠️ 請填入您的 Google Apps Script Web App URL
+    // D. 發送數據
+    btn.disabled = true;
+    msg.innerText = "正在提交中，請稍候...";
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // ⚠️ 這裡填入您最新的 Web App URL
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
 
-    fetch(webAppUrl, {
-      method: "POST",
-      mode: "no-cors", // 跨域關鍵
-      body: JSON.stringify(obj),
-      headers: { "Content-Type": "text/plain;charset=utf-8" }
-    }).then(() => {
-        alert("提交完成！感謝您的申請。");
+    try {
+        // 使用 Blob 封裝 JSON 以解決最棘手的跨域問題
+        const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
+        
+        await fetch(webAppUrl, {
+            method: 'POST',
+            body: blob,
+            mode: 'no-cors' // 必須，否則會被 Google 攔截
+        });
+
+        // 由於 no-cors 模式無法讀取返回結果，我們默認發送成功
+        alert("申請已成功發送！");
         form.reset();
         signaturePad.clear();
-        document.getElementById("progress").style.display = "none";
-        btn.style.display = "block";
-        window.scrollTo(0,0);
-    }).catch(err => {
-        alert("提交發生錯誤: " + err);
-        document.getElementById("progress").style.display = "none";
-        btn.style.display = "block";
-    });
+        msg.innerText = "提交成功！";
+    } catch (e) {
+        alert("提交失敗：" + e);
+        msg.innerText = "提交錯誤，請檢查網路。";
+    } finally {
+        btn.disabled = false;
+    }
   }
 </script>
 </body>
