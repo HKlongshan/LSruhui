@@ -1,46 +1,251 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>僑港順德龍山同鄉會入會申請</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>僑港順德龍山同鄉會 - 入會申請</title>
     <style>
-        /* 重置頁面樣式，確保沒有默認邊距 */
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100%; 
-            width: 100%;
-            overflow: hidden; /* 禁止主頁面滾動，完全交給 iframe */
-            background-color: #fcc7bd; /* 保持您的背景色 */
+        /* 1. 基礎樣式與大字體優化 */
+        body { 
+            background-color: #fcc7bd; 
+            font-family: 'Microsoft JhengHei', sans-serif; 
+            padding: 15px; 
+            margin: 0;
+            font-size: 24px; /* 整體字體放大一倍 */
         }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 12px; 
+            border-top: 15px solid #f55f41; 
+            padding: 40px 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        #header-image { width: 100%; height: auto; border-radius: 8px; margin-bottom: 25px; }
+        
+        h2 { font-size: 36px; text-align: center; color: #202124; margin-bottom: 10px; }
+        .description { font-size: 22px; line-height: 1.6; text-align: center; margin-bottom: 30px; }
 
-        /* 容器設置：在桌面端限制寬度，在手機端全屏 */
-        .iframe-wrapper {
-            width: 100%;
-            height: 100%;
-            max-width: 640px; /* 保持與 Apps Script 內部一致的寬度限制 */
-            margin: 0 auto; /* 居中 */
-            background: white;
-            position: relative;
-            -webkit-overflow-scrolling: touch; /* 優化 iOS 滾動體驗 */
+        /* 2. 表單組與必填提醒 */
+        .form-group { 
+            margin-bottom: 35px; 
+            padding: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
+        label { display: block; margin-bottom: 15px; font-weight: bold; color: #333; font-size: 26px; }
+        .required-label:after { content: " *"; color: #d93025; }
 
-        /* Iframe 設置：佔滿容器，允許內部滾動 */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
+        /* 閃爍動畫 */
+        @keyframes flash-red {
+            0% { background-color: transparent; }
+            50% { background-color: #ffcccc; border-color: red; }
+            100% { background-color: transparent; }
         }
+        .error-flash { animation: flash-red 0.5s ease-in-out 3; border: 2px solid red !important; }
+
+        /* 3. 輸入框樣式 */
+        input[type="text"], input[type="tel"], input[type="number"], input[type="email"] { 
+            width: 100%; padding: 12px 0; border: none; border-bottom: 3px solid #ccc; 
+            font-size: 24px; outline: none; box-sizing: border-box;
+        }
+        input:focus { border-bottom-color: #9b3d2a; }
+
+        /* 日期輸入框組合 */
+        .date-input-group { display: flex; align-items: center; gap: 10px; }
+        .date-input-group input { width: 80px; text-align: center; }
+        .date-input-group input.year { width: 120px; }
+        .date-sep { font-weight: bold; font-size: 28px; }
+
+        /* 單選框垂直排列 */
+        .radio-vertical label { 
+            display: flex; align-items: center; padding: 15px 0; 
+            border-bottom: 1px solid #f0f0f0; cursor: pointer; font-weight: normal;
+        }
+        .radio-vertical input { width: 30px; height: 30px; margin-right: 20px; accent-color: #9b3d2a; }
+
+        /* 4. 簽名板 */
+        canvas { border: 3px solid #dadce0; background-color: #fffaf0; width: 100%; height: 250px; border-radius: 8px; }
+        .clear-btn { background: #eee; border: 1px solid #ccc; padding: 10px 20px; font-size: 20px; margin-top: 10px; cursor: pointer; float: right; }
+
+        /* 5. 按鈕 */
+        button.submit-btn { 
+            width: 100%; padding: 20px; background-color: #9b3d2a; color: white; 
+            border: none; border-radius: 8px; font-size: 28px; font-weight: bold; cursor: pointer; margin-top: 30px;
+        }
+        #progress { text-align: center; color: #666; display: none; margin-top: 20px; font-size: 24px; }
     </style>
 </head>
 <body>
-    <div class="iframe-wrapper">
-        <iframe 
-            src="https://script.google.com/macros/s/AKfycbxacB7Jh_vCMcA_6lO4b4KTBtdjaXBmkFxqNLjIqL_VQ8oLZj1gBLcYLBPYEexARqPh/exec" 
-            title="入會申請表"
-        ></iframe>
-    </div>
+
+<div class="container">
+    <img id="header-image" src="https://hklongshan.github.io/LSruhui/banner.jpg" alt="Banner"> <h2>僑港順德龍山同鄉會</h2>
+    <div class="description">入會申請表格<br><span style="color:red">*</span> 為必填項目</div>
+
+    <form id="memberForm">
+        <div class="form-group" id="group-referrer">
+            <label>介紹人</label>
+            <input type="text" name="referrer" placeholder="您的介紹人">
+        </div>
+
+        <div class="form-group" id="group-name_zh">
+            <label class="required-label">中文姓名</label>
+            <input type="text" name="name_zh" required>
+        </div>
+
+        <div class="form-group radio-vertical" id="group-gender">
+            <label class="required-label">性別</label>
+            <label><input type="radio" name="gender" value="男" required> 男</label>
+            <label><input type="radio" name="gender" value="女"> 女</label>
+        </div>
+
+        <div class="form-group" id="group-age">
+            <label class="required-label">年齡</label>
+            <input type="number" name="age" required>
+        </div>
+
+        <div class="form-group" id="group-dob">
+            <label class="required-label">出生日期 (年/月/日)</label>
+            <div class="date-input-group">
+                <input type="number" id="dob_y" class="year" placeholder="1960" min="1900" max="2026">
+                <span class="date-sep">/</span>
+                <input type="number" id="dob_m" placeholder="01" min="1" max="12">
+                <span class="date-sep">/</span>
+                <input type="number" id="dob_d" placeholder="01" min="1" max="31">
+            </div>
+            <input type="hidden" name="dob" id="dob_final">
+        </div>
+
+        <div class="form-group" id="group-address">
+            <label class="required-label">地址</label>
+            <input type="text" name="address" required>
+        </div>
+
+        <div class="form-group" id="group-phone">
+            <label class="required-label">電話</label>
+            <input type="tel" name="phone" required>
+        </div>
+
+        <div class="form-group radio-vertical" id="group-is_voter">
+            <label class="required-label">是否已登記為選民</label>
+            <label><input type="radio" name="is_voter" value="是" required> 是</label>
+            <label><input type="radio" name="is_voter" value="否"> 否</label>
+        </div>
+
+        <div class="form-group" id="group-signature">
+            <label class="required-label">本人簽署</label>
+            <canvas id="sig-canvas"></canvas>
+            <button type="button" class="clear-btn" onclick="signaturePad.clear()">清除重寫</button>
+            <input type="hidden" name="signature" id="signature">
+        </div>
+
+        <button type="button" class="submit-btn" onclick="handleFormSubmit(this)">提交申請</button>
+        <div id="progress">正在提交，請稍候...</div>
+    </form>
+</div>
+
+<script>
+    /*! Signature Pad v4.1.7 | https://github.com/szimek/signature_pad */
+    !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).SignaturePad=e()}(this,(function(){"use strict";/* 此處省略數千行庫代碼，建議實際使用時通過 script 引入或完整貼入 */ }));
+</script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+<script>
+    // 1. 初始化簽名板
+    const canvas = document.getElementById('sig-canvas');
+    const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 250, 240)' });
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    }
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("load", resizeCanvas);
+
+    // 2. 日期處理：自動補0
+    function getFormattedDate() {
+        let y = document.getElementById('dob_y').value;
+        let m = document.getElementById('dob_m').value;
+        let d = document.getElementById('dob_d').value;
+        if(!y || !m || !d) return "";
+        m = m.padStart(2, '0');
+        d = d.padStart(2, '0');
+        return `${y}/${m}/${d}`;
+    }
+
+    // 3. 閃爍提醒函數
+    function flashError(elementId) {
+        const el = document.getElementById(elementId);
+        el.classList.remove('error-flash');
+        void el.offsetWidth; // 觸發重繪
+        el.classList.add('error-flash');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // 4. 提交邏輯
+    async function handleFormSubmit(btn) {
+        const form = document.getElementById('memberForm');
+        
+        // 驗證日期
+        const dobStr = getFormattedDate();
+        if(!dobStr) { alert("請填寫完整的出生日期。"); flashError('group-dob'); return; }
+        document.getElementById('dob_final').value = dobStr;
+
+        // 驗證必填文字框
+        const requiredInputs = form.querySelectorAll('input[required]');
+        for(let input of requiredInputs) {
+            if(input.type === 'radio') {
+                const name = input.name;
+                if(!form.querySelector(`input[name="${name}"]:checked`)) {
+                    alert("請選擇必填項。"); flashError(`group-${name}`); return;
+                }
+            } else if(!input.value) {
+                alert("請填寫此欄位。"); flashError(`group-${input.name}`); return;
+            }
+        }
+
+        // 驗證簽名
+        if(signaturePad.isEmpty()) { alert("請進行手寫簽名。"); flashError('group-signature'); return; }
+        document.getElementById('signature').value = signaturePad.toDataURL();
+
+        // 提交數據
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        document.getElementById('progress').style.display = "block";
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // ⚠️ 注意：這裡的 URL 需要換成您 Google Apps Script 部署後的 Web App URL
+        const GAS_URL = "https://script.google.com/macros/s/你的腳本ID/exec";
+
+        try {
+            // 使用 fetch 提交 (跨域請求)
+            await fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 重要：解決跨域限制
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            alert("提交成功！感謝您的參與。");
+            form.reset();
+            signaturePad.clear();
+            window.scrollTo(0,0);
+        } catch (e) {
+            alert("提交失敗，請檢查網絡：" + e);
+        } finally {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            document.getElementById('progress').style.display = "none";
+        }
+    }
+</script>
+
 </body>
 </html>
