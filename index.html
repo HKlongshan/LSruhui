@@ -156,7 +156,7 @@
         await fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
 
         // 成功彈窗
-        alert("歡迎加入龍山同鄉會，您的會員號碼為：" + memberId + "\n\n請及時前往秘書處繳付會費，以激活會員身份。");
+        alert("歡迎加入龍山同鄉會" + "\n\n您的會員號碼為：" + memberId + "\n\n請及時前往秘書處繳付會費，以激活會員身份。");
         form.reset();
         signaturePad.clear();
         msg.innerText = "已提交成功。";
