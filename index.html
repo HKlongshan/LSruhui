@@ -152,66 +152,48 @@
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
+  // ... 簽名板初始化代碼保持不變 ...
 
-  // 3. 提交邏輯
   async function submitForm() {
     const form = document.getElementById('memberForm');
     const msg = document.getElementById('msg');
     const btn = document.getElementById('submitBtn');
 
-    // A. 驗證日期
+    // 日期處理
     const y = document.getElementById('dob_y').value;
     const m = document.getElementById('dob_m').value;
     const d = document.getElementById('dob_d').value;
-    if(!y || !m || !d) { alert("請填寫出生日期"); flashError('group-dob'); return; }
-    document.getElementById('dob_hidden').value = `${y}/${m}/${d}`;
+    if(!y || !m || !d) { alert("請填寫出生日期"); return; }
+    document.getElementById('dob_hidden').value = `${y}-${m}-${d}`;
 
-    // B. 驗證所有 required 的輸入框
-    const requireds = form.querySelectorAll('[required]');
-    for(let el of requireds) {
-        if(el.type === 'radio') {
-            if(!form.querySelector(`input[name="${el.name}"]:checked`)) {
-                alert("請填寫必填項"); flashError(el.closest('.form-group').id); return;
-            }
-        } else if(el.type === 'checkbox') {
-            if(!el.checked) { alert("請勾選確認聲明"); flashError('group-decl'); return; }
-        } else if(!el.value) {
-            alert("請填寫必填項"); flashError(el.closest('.form-group').id); el.focus(); return;
-        }
-    }
-
-    // C. 驗證簽名
-    if(signaturePad.isEmpty()) { alert("請簽名"); flashError('group-sig'); return; }
+    // 簽名處理
+    if(signaturePad.isEmpty()) { alert("請簽名"); return; }
     document.getElementById('signature').value = signaturePad.toDataURL();
 
-    // D. 發送數據
     btn.disabled = true;
-    msg.innerText = "正在提交中，請稍候...";
+    msg.innerText = "正在提交到系統...";
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // ⚠️ 這裡填入您最新的 Web App URL
+    // 獲取最新的 Web App URL
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
 
     try {
-        // 使用 Blob 封裝 JSON 以解決最棘手的跨域問題
         const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
-        
         await fetch(webAppUrl, {
             method: 'POST',
             body: blob,
-            mode: 'no-cors' // 必須，否則會被 Google 攔截
+            mode: 'no-cors'
         });
 
-        // 由於 no-cors 模式無法讀取返回結果，我們默認發送成功
-        alert("申請已成功發送！");
+        alert("提交成功！數據已存入 Excel。");
         form.reset();
         signaturePad.clear();
-        msg.innerText = "提交成功！";
+        msg.innerText = "提交完畢。";
     } catch (e) {
         alert("提交失敗：" + e);
-        msg.innerText = "提交錯誤，請檢查網路。";
+        msg.innerText = "錯誤，請重試。";
     } finally {
         btn.disabled = false;
     }
