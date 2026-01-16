@@ -212,30 +212,12 @@
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
 
-    // --- 最小化修改：雙路地址 ---
-    const webAppUrl = \"https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec\";
-   //   const formspreeUrl = \"https://formspree.io/f/xbjnveze\";
-
-     try {
+    try {
         const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
         await fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
-
-     // try {
-        // 準備兩組請求
-      //    const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
         
-       //   const googleRequest = fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
-       //   const formspreeRequest = fetch(formspreeUrl, { 
-       //       method: 'POST', 
-       //       body: formData, 
-       //       headers: { 'Accept': 'application/json' } 
-       //   });
-
-        // 同時執行，並等待兩邊都完成嘗試
-        await Promise.allSettled([googleRequest, formspreeRequest]);
-
-      
         alert("歡迎加入龍山同鄉會" + "\n\n您的會員號碼為：" + memberId + "\n\n請及時前往秘書處繳付會費，以激活會員身份。");
         form.reset();
         signaturePad.clear();
