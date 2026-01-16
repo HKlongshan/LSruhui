@@ -5,39 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>僑港順德龍山同鄉會入會申請</title>
   <script>
-    // SignaturePad 庫
-    !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).SignaturePad=e()}(this,(function(){"use strict";class t{constructor(t,e,i,s){if(isNaN(t)||isNaN(e))throw new Error(`Point is invalid: (${t}, ${e})`);this.x=+t,this.y=+e,this.pressure=i||0,this.time=s||Date.now()}distanceTo(t){return Math.sqrt(Math.pow(this.x-t.x,2)+Math.pow(this.y-t.y,2))}equals(t){return this.x===t.x&&this.y===t.y&&this.pressure===t.pressure&&this.time===t.time}velocityFrom(t){return this.time!==t.time?this.distanceTo(t)/(this.time-t.time):0}}class e{static fromPoints(t,i){const s=this.calculateControlPoints(t[0],t[1],t[2]).c2,n=this.calculateControlPoints(t[1],t[2],t[3]).c1;return new e(t[1],s,n,t[2],i.start,i.end)}static calculateControlPoints(e,i,s){const n=e.x-i.x,o=e.y-i.y,h=i.x-s.x,r=i.y-s.y,a=(e.x+i.x)/2,c=(e.y+i.y)/2,d=(i.x+s.x)/2,l=(i.y+s.y)/2,u=Math.sqrt(n*n+o*o),v=Math.sqrt(h*h+r*r),_=v/(u+v),p=d+(a-d)*_,m=l+(c-l)*_,g=i.x-p,w=i.y-m;return{c1:new t(a+g,c+w),c2:new t(d+g,l+w)}}constructor(t,e,i,s,n,o){this.startPoint=t,this.control2=e,this.control1=i,this.endPoint=s,this.startWidth=n,this.endWidth=o}length(){let t,e,i=0;for(let s=0;s<=10;s+=1){const n=s/10,o=this.point(n,this.startPoint.x,this.control1.x,this.control2.x,this.endPoint.x),h=this.point(n,this.startPoint.y,this.control1.y,this.control2.y,this.endPoint.y);if(s>0){const s=o-t,n=h-e;i+=Math.sqrt(s*s+n*n)}t=o,e=h}return i}point(t,e,i,s,n){return e*(1-t)*(1-t)*(1-t)+3*i*(1-t)*(1-t)*t+3*s*(1-t)*t*t+n*t*t*t}}class i{constructor(){try{this._et=new EventTarget}catch(t){this._et=document}}addEventListener(t,e,i){this._et.addEventListener(t,e,i)}dispatchEvent(t){return this._et.dispatchEvent(t)}removeEventListener(t,e,i){this._et.removeEventListener(t,e,i)}}class s extends i{constructor(t,e={}){super(),this.canvas=t,this._drawingStroke=!1,this._isEmpty=!0,this._lastPoints=[],this._data=[],this._lastVelocity=0,this._lastWidth=0,this._handleMouseDown=t=>{1===t.buttons&&this._strokeBegin(t)},this._handleMouseMove=t=>{this._strokeMoveUpdate(t)},this._handleMouseUp=t=>{1===t.buttons&&this._strokeEnd(t)},this._handleTouchStart=t=>{if(t.cancelable&&t.preventDefault(),1===t.targetTouches.length){const e=t.changedTouches[0];this._strokeBegin(e)}},this._handleTouchMove=t=>{t.cancelable&&t.preventDefault();const e=t.targetTouches[0];this._strokeMoveUpdate(e)},this._handleTouchEnd=t=>{if(t.target===this.canvas){t.cancelable&&t.preventDefault();const e=t.changedTouches[0];this._strokeEnd(e)}},this._handlePointerStart=t=>{t.preventDefault(),this._strokeBegin(t)},this._handlePointerMove=t=>{this._strokeMoveUpdate(t)},this._handlePointerEnd=t=>{this._drawingStroke&&(t.preventDefault(),this._strokeEnd(t))},this.velocityFilterWeight=e.velocityFilterWeight||.7,this.minWidth=e.minWidth||.5,this.maxWidth=e.maxWidth||2.5,this.throttle="throttle"in e?e.throttle:16,this.minDistance="minDistance"in e?e.minDistance:5,this.dotSize=e.dotSize||0,this.penColor=e.penColor||"black",this.backgroundColor=e.backgroundColor||"rgba(0,0,0,0)",this.compositeOperation=e.compositeOperation||"source-over",this._strokeMoveUpdate=this.throttle?function(t,e=250){let i,s,n,o=0,h=null;const r=()=>{o=Date.now(),h=null,i=t.apply(s,n),h||(s=null,n=[])};return function(...a){const c=Date.now(),d=e-(c-o);return s=this,n=a,d<=0||d>e?(h&&(clearTimeout(h),h=null),o=c,i=t.apply(s,n),h||(s=null,n=[])):h||(h=window.setTimeout(r,d)),i}}(s.prototype._strokeUpdate,this.throttle):s.prototype._strokeUpdate,this._ctx=t.getContext("2d"),this.clear(),this.on()}clear(){const{_ctx:t,canvas:e}=this;t.fillStyle=this.backgroundColor,t.clearRect(0,0,e.width,e.height),t.fillRect(0,0,e.width,e.height),this._data=[],this._reset(this._getPointGroupOptions()),this._isEmpty=!0}fromDataURL(t,e={}){return new Promise(((i,s)=>{const n=new Image,o=e.ratio||window.devicePixelRatio||1,h=e.width||this.canvas.width/o,r=e.height||this.canvas.height/o,a=e.xOffset||0,c=e.yOffset||0;this._reset(this._getPointGroupOptions()),n.onload=()=>{this._ctx.drawImage(n,a,c,h,r),i()},n.onerror=t=>{s(t)},n.crossOrigin="anonymous",n.src=t,this._isEmpty=!1}))}toDataURL(t="image/png",e){return"image/svg+xml"===t?("object"!=typeof e&&(e=void 0),`data:image/svg+xml;base64,${btoa(this.toSVG(e))}`):("number"!=typeof e&&(e=void 0),this.canvas.toDataURL(t,e))}on(){this.canvas.style.touchAction="none",this.canvas.style.msTouchAction="none",this.canvas.style.userSelect="none";const t=/Macintosh/.test(navigator.userAgent)&&"ontouchstart"in document;window.PointerEvent&&!t?this._handlePointerEvents():(this._handleMouseEvents(),"ontouchstart"in window&&this._handleTouchEvents())}off(){this.canvas.style.touchAction="auto",this.canvas.style.msTouchAction="auto",this.canvas.style.userSelect="auto",this.canvas.removeEventListener("pointerdown",this._handlePointerStart),this.canvas.removeEventListener("pointermove",this._handlePointerMove),this.canvas.ownerDocument.removeEventListener("pointerup",this._handlePointerEnd),this.canvas.removeEventListener("mousedown",this._handleMouseDown),this.canvas.removeEventListener("mousemove",this._handleMouseMove),this.canvas.ownerDocument.removeEventListener("mouseup",this._handleMouseUp),this.canvas.removeEventListener("touchstart",this._handleTouchStart),this.canvas.removeEventListener("touchmove",this._handleTouchMove),this.canvas.removeEventListener("touchend",this._handleTouchEnd)}isEmpty(){return this._isEmpty}fromData(t,{clear:e=!0}={}){e&&this.clear(),this._fromData(t,this._drawCurve.bind(this),this._drawDot.bind(this)),this._data=this._data.concat(t)}toData(){return this._data}_getPointGroupOptions(t){return{penColor:t&&"penColor"in t?t.penColor:this.penColor,dotSize:t&&"dotSize"in t?t.dotSize:this.dotSize,minWidth:t&&"minWidth"in t?t.minWidth:this.minWidth,maxWidth:t&&"maxWidth"in t?t.maxWidth:this.maxWidth,velocityFilterWeight:t&&"velocityFilterWeight"in t?t.velocityFilterWeight:this.velocityFilterWeight,compositeOperation:t&&"compositeOperation"in t?t.compositeOperation:this.compositeOperation}}_strokeBegin(t){if(!this.dispatchEvent(new CustomEvent("beginStroke",{detail:t,cancelable:!0})))return;this._drawingStroke=!0;const e=this._getPointGroupOptions(),i=Object.assign(Object.assign({},e),{points:[]});this._data.push(i),this._reset(e),this._strokeUpdate(t)}_strokeUpdate(t){if(!this._drawingStroke)return;if(0===this._data.length)return void this._strokeBegin(t);this.dispatchEvent(new CustomEvent("beforeUpdateStroke",{detail:t}));const e=t.clientX,i=t.clientY,s=void 0!==t.pressure?t.pressure:void 0!==t.force?t.force:0,n=this._createPoint(e,i,s),o=this._data[this._data.length-1],h=o.points,r=h.length>0&&h[h.length-1],a=!!r&&n.distanceTo(r)<=this.minDistance,c=this._getPointGroupOptions(o);if(!r||!r||!a){const r_point=this._addPoint(n,c);r?r_point&&this._drawCurve(r_point,c):this._drawDot(n,c),h.push({time:n.time,x:n.x,y:n.y,pressure:n.pressure})}this.dispatchEvent(new CustomEvent("afterUpdateStroke",{detail:t}))}_strokeEnd(t){this._drawingStroke&&(this._strokeUpdate(t),this._drawingStroke=!1,this.dispatchEvent(new CustomEvent("endStroke",{detail:t})))}_handlePointerEvents(){this._drawingStroke=!1,this.canvas.addEventListener("pointerdown",this._handlePointerStart),this.canvas.addEventListener("pointermove",this._handlePointerMove),this.canvas.ownerDocument.addEventListener("pointerup",this._handlePointerEnd)}_handleMouseEvents(){this._drawingStroke=!1,this.canvas.addEventListener("mousedown",this._handleMouseDown),this.canvas.addEventListener("mousemove",this._handleMouseMove),this.canvas.ownerDocument.addEventListener("mouseup",this._handleMouseUp)}_handleTouchEvents(){this.canvas.addEventListener("touchstart",this._handleTouchStart),this.canvas.addEventListener("touchmove",this._handleTouchMove),this.canvas.addEventListener("touchend",this._handleTouchEnd)}_reset(t){this._lastPoints=[],this._lastVelocity=0,this._lastWidth=(t.minWidth+t.maxWidth)/2,this._ctx.fillStyle=t.penColor,this._ctx.globalCompositeOperation=t.compositeOperation}_createPoint(e,i,s){const n=this.canvas.getBoundingClientRect();return new t(e-n.left,i-n.top,s,(new Date).getTime())}_addPoint(t,i){const{_lastPoints:s}=this;if(s.push(t),s.length>2){3===s.length&&s.unshift(s[0]);const t=this._calculateCurveWidths(s[1],s[2],i),n=e.fromPoints(s,t);return s.shift(),n}return null}_calculateCurveWidths(t,e,i){const s=i.velocityFilterWeight*e.velocityFrom(t)+(1-i.velocityFilterWeight)*this._lastVelocity,n=this._strokeWidth(s,i),o={end:n,start:this._lastWidth};return this._lastVelocity=s,this._lastWidth=n,o}_strokeWidth(t,e){return Math.max(e.maxWidth/(t+1),e.minWidth)}_drawCurveSegment(t,e,i){const s=this._ctx;s.moveTo(t,e),s.arc(t,e,i,0,2*Math.PI,!1),this._isEmpty=!1}_drawCurve(t,e){const i=this._ctx,s=t.endWidth-t.startWidth,n=2*Math.ceil(t.length());i.beginPath(),i.fillStyle=e.penColor;for(let i=0;i<n;i+=1){const o=i/n,h=o*o,r=h*o,a=1-o,c=a*a,d=c*a;let l=d*t.startPoint.x;l+=3*c*o*t.control1.x,l+=3*a*h*t.control2.x,l+=r*t.endPoint.x;let u=d*t.startPoint.y;u+=3*c*o*t.control1.y,u+=3*a*h*t.control2.y,u+=r*t.endPoint.y;const v=Math.min(t.startWidth+r*s,e.maxWidth);this._drawCurveSegment(l,u,v)}i.closePath(),i.fill()}_drawDot(t,e){const i=this._ctx,s=e.dotSize>0?e.dotSize:(e.minWidth+e.maxWidth)/2;i.beginPath(),this._drawCurveSegment(t.x,t.y,s),i.closePath(),i.fillStyle=e.penColor,i.fill()}_fromData(e,i,s){for(const n of e){const{points:e}=n,o=this._getPointGroupOptions(n);if(e.length>1)for(let s=0;s<e.length;s+=1){const n=e[s],h=new t(n.x,n.y,n.pressure,n.time);0===s&&this._reset(o);const r=this._addPoint(h,o);r&&i(r,o)}else this._reset(o),s(e[0],o)}}toSVG({includeBackgroundColor:t=!1}={}){const e=this._data,i=Math.max(window.devicePixelRatio||1,1),s=this.canvas.width/i,n=this.canvas.height/i,o=document.createElementNS("http://www.w3.org/2000/svg","svg");if(o.setAttribute("xmlns","http://www.w3.org/2000/svg"),o.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink"),o.setAttribute("viewBox",`0 0 ${s} ${n}`),o.setAttribute("width",s.toString()),o.setAttribute("height",n.toString()),t&&this.backgroundColor){const t=document.createElement("rect");t.setAttribute("width","100%"),t.setAttribute("height","100%"),t.setAttribute("fill",this.backgroundColor),o.appendChild(t)}return this._fromData(e,((t,{penColor:e})=>{const i=document.createElement("path");if(!(isNaN(t.control1.x)||isNaN(t.control1.y)||isNaN(t.control2.x)||isNaN(t.control2.y))){const s=`M ${t.startPoint.x.toFixed(3)},${t.startPoint.y.toFixed(3)} C ${t.control1.x.toFixed(3)},${t.control1.y.toFixed(3)} ${t.control2.x.toFixed(3)},${t.control2.y.toFixed(3)} ${t.endPoint.x.toFixed(3)},${t.endPoint.y.toFixed(3)}`;i.setAttribute("d",s),i.setAttribute("stroke-width",(2.25*t.endWidth).toFixed(3)),i.setAttribute("stroke",e),i.setAttribute("fill","none"),i.setAttribute("stroke-linecap","round"),o.appendChild(i)}}),((t,{penColor:e,dotSize:i,minWidth:s,maxWidth:n})=>{const h=document.createElement("circle"),r=i>0?i:(s+n)/2;h.setAttribute("r",r.toString()),h.setAttribute("cx",t.x.toString()),h.setAttribute("cy",t.y.toString()),h.setAttribute("fill",e),o.appendChild(h)})),o.outerHTML}}return s}));
+    // 內嵌 SignaturePad 庫 (保持您的原版庫文件)
+    !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).SignaturePad=e()}(this,(function(){"use strict";class t{constructor(t,e,i,s){if(isNaN(t)||isNaN(e))throw new Error(`Point is invalid: (${t}, ${e})`);this.x=+t,this.y=+e,this.pressure=i||0,this.time=s||Date.now()}distanceTo(t){return Math.sqrt(Math.pow(this.x-t.x,2)+Math.pow(this.y-t.y,2))}equals(t){return this.x===t.x&&this.y===t.y&&this.pressure===t.pressure&&this.time===t.time}velocityFrom(t){return this.time!==t.time?this.distanceTo(t)/(this.time-t.time):0}}class e{static fromPoints(t,i){const s=this.calculateControlPoints(t[0],t[1],t[2]).c2,n=this.calculateControlPoints(t[1],t[2],t[3]).c1;return new e(t[1],s,n,t[2],i.start,i.end)}static calculateControlPoints(e,i,s){const n=e.x-i.x,o=e.y-i.y,r=i.x-s.x,a=i.y-s.y,h=(e.distanceTo(i)+i.distanceTo(s))/2,l=Math.sqrt(Math.pow(n,2)+Math.pow(o,2)),c=Math.sqrt(Math.pow(r,2)+Math.pow(a,2));return{c1:new t(i.x+n/l*h*.2,i.y+o/l*h*.2),c2:new t(i.x-r/c*h*.2,i.y-a/c*h*.2)}}constructor(t,e,i,s,n,o){this.startPoint=t,this.control1=e,this.control2=i,this.endPoint=s,this.startWidth=n,this.endWidth=o}length(){const t=10;let e,i,s=0;for(let n=0;n<=t;n++){const o=this.point(n/t);if(n>0){const t=o.x-e.x,n=o.y-i.y;s+=Math.sqrt(t*t+n*n)}e=o,i=o}return s}point(e){const i=e,s=i*i,n=s*i,o=1-i,r=o*o,a=r*o;return new t(a*this.startPoint.x+3*r*i*this.control1.x+3*o*s*this.control2.x+n*this.endPoint.x,a*this.startPoint.y+3*r*i*this.control1.y+3*o*s*this.control2.y+n*this.endPoint.y)}}class i{constructor(t,e={}){this.canvas=t,this.options=e,this._handleMouseDown=t=>{1===t.which&&this._strokeBegin(t)},this._handleMouseMove=t=>{this._strokeMove(t)},this._handleMouseUp=t=>{1===t.which&&this._strokeEnd(t)},this._handleTouchStart=t=>{if(1===t.targetTouches.length){const e=t.targetTouches[0];this._strokeBegin(e)}},this._handleTouchMove=t=>{if(1===t.targetTouches.length){const e=t.targetTouches[0];this._strokeMove(e)}},this._handleTouchEnd=t=>{t.target===this.canvas&&this._strokeEnd(t)},this.velocityFilterWeight=e.velocityFilterWeight||.7,this.minWidth=e.minWidth||.5,this.maxWidth=e.maxWidth||2.5,this.throttle=e.throttle||16,this.minDistance=e.minDistance||5,this.dotSize=e.dotSize||0,this.penColor=e.penColor||"black",this.backgroundColor=e.backgroundColor||"rgba(0,0,0,0)",this.onBegin=e.onBegin,this.onEnd=e.onEnd,this._ctx=t.getContext("2d"),this.clear(),this.on()}clear(){const t=this._ctx,e=this.canvas;t.fillStyle=this.backgroundColor,t.clearRect(0,0,e.width,e.height),t.fillRect(0,0,e.width,e.height),this._data=[],this._reset(),this._isEmpty=!0}toDataURL(t,e){const i=this.canvas;return i.toDataURL.apply(i,arguments)}on(){this.canvas.style.touchAction="none",this.canvas.style.msTouchAction="none",window.PointerEvent?(this.canvas.addEventListener("pointerdown",this._handleMouseDown),this.canvas.addEventListener("pointermove",this._handleMouseMove),document.addEventListener("pointerup",this._handleMouseUp)):(this.canvas.addEventListener("mousedown",this._handleMouseDown),this.canvas.addEventListener("mousemove",this._handleMouseMove),document.addEventListener("mouseup",this._handleMouseUp),this.canvas.addEventListener("touchstart",this._handleTouchStart),this.canvas.addEventListener("touchmove",this._handleTouchMove),this.canvas.addEventListener("touchend",this._handleTouchEnd))}isEmpty(){return this._isEmpty}_strokeBegin(t){const e={color:this.penColor,points:[]};this._data.push(e),this._reset(),this._strokeUpdate(t),this.onBegin&&this.onBegin(t)}async _strokeMove(t){if(0===this._lastPoints.length)return void this._strokeUpdate(t);const e=Date.now(),i=e-this._lastUpdate;i<this.throttle||(this._lastUpdate=e,this._strokeUpdate(t))}_strokeEnd(t){this._strokeUpdate(t),this.onEnd&&this.onEnd(t)}_reset(){this._lastPoints=[],this._lastVelocity=0,this._lastWidth=(this.minWidth+this.maxWidth)/2,this._ctx.fillStyle=this.penColor,this._lastUpdate=0}_strokeUpdate(t){const e=this._createPoint(t);this._addPoint(e)}_addPoint(t){const{_lastPoints:i}=this;if(i.push(t),i.length>2){3===i.length&&i.unshift(i[0]);const t=this._calculateCurveControlPoints(i[0],i[1],i[2]),s=new e(i[1],t.c2,this._calculateCurveControlPoints(i[1],i[2],i[3]).c1,i[2],this._lastWidth,this._calculateCurveWidths(i[1],i[2]).end);this._drawCurve(s),this._lastWidth=s.endWidth,i.shift()}}_calculateCurveControlPoints(i,s,n){const o=i.x-s.x,r=i.y-s.y,a=s.x-n.x,h=s.y-n.y,l=(i.distanceTo(s)+s.distanceTo(n))/2,c=Math.sqrt(Math.pow(o,2)+Math.pow(r,2)),u=Math.sqrt(Math.pow(a,2)+Math.pow(h,2));return{c1:new t(s.x+o/c*l*.2,s.y+r/c*l*.2),c2:new t(s.x-a/u*l*.2,s.y-h/u*l*.2)}}_calculateCurveWidths(t,e){const i=this.velocityFilterWeight*e.velocityFrom(t)+(1-this.velocityFilterWeight)*this._lastVelocity,s=this._strokeWidth(i),n={start:this._lastWidth,end:s};return this._lastVelocity=i,this._lastWidth=s,n}_strokeWidth(t){return Math.max(this.maxWidth/ (t+1),this.minWidth)}_drawCurveSegment(t,e,i){const s=this._ctx;s.moveTo(t,e),s.lineTo(i.x,i.y)}_drawCurve(t){const e=this._ctx,i=Math.ceil(t.length()),s=t.startWidth;for(let n=0;n<i;n++){const i=(n+1)/this.canvas.width,o=t.point(i),r=t.startWidth+(t.endWidth-t.startWidth)*i;this._drawCurveSegment(o.x,o.y,r),e.stroke()}this._isEmpty=!1}_createPoint(e){const i=this.canvas.getBoundingClientRect();return new t(e.clientX-i.left,e.clientY-i.top,e.pressure,e.time)}}return i}));
   </script>
   
   <style>
-    body { background-color: #fcc7bd; font-family: 'Roboto', 'Google Sans', Helvetica, Arial, sans-serif; padding: 20px; margin: 0; overflow-x: hidden; }
-    .container { max-width: 960px; width: 100%; margin: 0 auto; background: white; border-radius: 8px; border-top: 15px solid #f55f41; padding: 30px; box-sizing: border-box; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
-    #header-image { width: 100%; height: auto; display: block; margin-bottom: 30px; border-radius: 4px; border: 1px solid #e0e0e0; }
-    h2 { color: #202124; font-size: 32px; margin: 20px 0; font-weight: 500; text-align: center; }
-    .description { font-size: 18px; color: #202124; margin-bottom: 30px; line-height: 1.6; text-align: center; }
+    body { background-color: #fcc7bd; font-family: 'Roboto', sans-serif; padding: 20px; margin: 0; }
+    .container { max-width: 960px; margin: 0 auto; background: white; border-top: 15px solid #f55f41; padding: 30px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    h2 { text-align: center; color: #202124; margin-bottom: 30px; }
     .form-group { margin-bottom: 30px; padding: 20px; border: 1px solid #dadce0; border-radius: 8px; background-color: #fff; transition: all 0.3s; }
-    label { font-size: 22px; display: block; margin-bottom: 10px; font-weight: 500;}
+    label { font-size: 22px; display: block; margin-bottom: 10px; font-weight: 500; color: #202124; }
     .required-label:after { content: " *"; color: #d93025; font-size: 24px; }
-    input[type="text"], input[type="tel"], input[type="email"], input[type="number"] { width: 100%; padding: 10px 0; border: none; border-bottom: 1px dotted #999; font-size: 20px; outline:none; }
-    .radio-group label, .checkbox-group label { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; width: 100%; font-weight: normal;}
-    .radio-group input, .checkbox-group input { margin-right: 15px; width: 26px; height: 26px; accent-color: #9b3d2a; flex-shrink: 0;}
-    .date-input-wrapper { display: flex; justify-content: space-between; align-items: center; }
-    .date-box { text-align: center; width: 30%; }
-    .date-box input { width: 100%; text-align: center; border: none; border-bottom: 1px solid #999; font-size: 20px; padding: 5px 0; }
-    .signature-pad-wrapper { border: 2px solid #dadce0; border-radius: 4px; background-color: #fffaf0; position: relative; height: 250px; width: 100%; }
-    canvas { width: 100%; height: 100%; display: block; touch-action: none; }
-    button.submit-btn { width: 100%; max-width: 300px; padding: 18px; background-color: #9b3d2a; color: white; border: none; border-radius: 8px; font-size: 24px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-    .clear-btn { color: #9b3d2a; border: none; background: none; font-weight: bold; padding: 10px 0; font-size: 18px; cursor: pointer; float: right; }
-    .fee-notice { font-size: 20px; font-weight: bold; margin: 30px 0; line-height: 1.4; color: #b22222; }
+    input[type="text"], input[type="tel"], input[type="email"], input[type="number"] { width: 100%; padding: 10px 0; border: none; border-bottom: 1px dotted #999; font-size: 20px; outline:none; transition: border-color 0.2s; }
+    input:focus { border-bottom: 2px solid #f55f41; }
+    .signature-pad-wrapper { border: 2px solid #dadce0; border-radius: 4px; background-color: #fffaf0; height: 250px; width: 100%; position: relative; }
+    canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; cursor: crosshair; }
+    button.submit-btn { width: 100%; max-width: 300px; padding: 18px; background-color: #9b3d2a; color: white; border: none; border-radius: 8px; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    button.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-    /* --- 新增：閃爍提醒樣式 --- */
+    /* --- 新增：必填項報錯時的閃爍效果 --- */
     @keyframes flash-red {
       0% { border-color: #dadce0; background-color: #fff; }
       50% { border-color: #ff0000; background-color: #ffeeee; }
       100% { border-color: #dadce0; background-color: #fff; }
     }
     .flash-error {
-      animation: flash-red 0.5s 3; /* 閃爍 3 次 */
+      animation: flash-red 0.5s 3;
       border: 2px solid red !important;
     }
   </style>
@@ -45,93 +38,122 @@
 <body>
 
 <div class="container">
- <img id="header-image" src="banner.png" alt="僑港順德龍山同鄉會">
-  
- <h2>僑港順德龍山同鄉會</h2>
-  <h2>入會申請表格</h2>
-    <div class="description">承蒙您的關注與支持，實乃本會之幸。謹向您致以最誠摯的感謝。<br>
-    感謝您一直以來對僑港順德龍山同鄉會的呵護與推動，也盼能在您的見證下，開啟與同鄉攜手同行的新篇。<br><br>
-    <span style="color: red;">*</span> 為必填項目</div>
+  <img id="header-image" src="https://lh3.googleusercontent.com/d/1XyL9_V6MhLpL8I0fG4-x6Y7wzY9zG9M9" style="width:100%; border-radius: 4px;" alt="Banner">
+  <h2>僑港順德龍山同鄉會 入會申請表格</h2>
   
   <form id="memberForm">
     <input type="hidden" name="member_id" id="member_id_hidden">
+    
+    <div class="form-group">
+      <label>介紹人</label>
+      <input type="text" name="referrer" placeholder="如有請填寫">
+    </div>
 
-    <div class="form-group"><label>介紹人</label><input type="text" name="referrer"></div>
-    <div class="form-group"><label class="required-label">中文姓名</label><input type="text" name="name_zh" required></div>
-    <div class="form-group"><label>英文姓名</label><input type="text" name="name_en"></div>
-    <div class="form-group"><label class="required-label">性別</label>
-      <div class="radio-group">
-        <label><input type="radio" name="gender" value="男" required> 男</label>
-        <label><input type="radio" name="gender" value="女"> 女</label>
+    <div class="form-group">
+      <label class="required-label">中文姓名</label>
+      <input type="text" name="name_zh" required>
+    </div>
+
+    <div class="form-group">
+      <label>英文姓名</label>
+      <input type="text" name="name_en">
+    </div>
+
+    <div class="form-group">
+      <label class="required-label">性別</label>
+      <div style="display:flex; gap:30px; font-size: 20px;">
+        <label style="font-weight:normal;"><input type="radio" name="gender" value="男" required> 男</label>
+        <label style="font-weight:normal;"><input type="radio" name="gender" value="女"> 女</label>
       </div>
     </div>
-    <div class="form-group"><label class="required-label">年齡</label><input type="number" name="age" required></div>
+
+    <div class="form-group">
+      <label>年齡</label>
+      <input type="number" name="age">
+    </div>
+
     <div class="form-group">
       <label class="required-label">出生日期 (年/月/日)</label>
-      <div class="date-input-wrapper">
-        <div class="date-box"><input type="number" id="dob_y" placeholder="YYYY" required><div style="font-size:12px;">年</div></div>
-        <div class="date-box"><input type="number" id="dob_m" placeholder="MM" required><div style="font-size:12px;">月</div></div>
-        <div class="date-box"><input type="number" id="dob_d" placeholder="DD" required><div style="font-size:12px;">日</div></div>
+      <div style="display:flex; gap:10px;">
+        <input type="number" id="dob_y" placeholder="YYYY" style="width:35%; text-align:center;">
+        <input type="number" id="dob_m" placeholder="MM" style="width:25%; text-align:center;">
+        <input type="number" id="dob_d" placeholder="DD" style="width:25%; text-align:center;">
       </div>
       <input type="hidden" name="dob" id="dob_hidden">
     </div>
-    <div class="form-group"><label class="required-label">身份證/護照號碼</label><input type="text" name="id_passport" required></div>
-    <div class="form-group"><label class="required-label">籍貫/國籍</label><input type="text" name="native_country" required></div>
-    <div class="form-group"><label>職業</label><input type="text" name="occupation"></div>
-    <div class="form-group"><label>婚姻狀況</label>
-      <div class="radio-group">
-        <label><input type="radio" name="marital_status" value="未婚/單身"> 未婚/單身</label>
-        <label><input type="radio" name="marital_status" value="已婚"> 已婚</label>
-        <label><input type="radio" name="marital_status" value="離婚"> 離婚</label>
-        <label><input type="radio" name="marital_status" value="分居"> 分居</label>
-        <label><input type="radio" name="marital_status" value="喪偶"> 喪偶</label>
-      </div>
-    </div>
-    <div class="form-group"><label class="required-label">地址</label><input type="text" name="address" required></div>
-    <div class="form-group"><label class="required-label">電話</label><input type="tel" name="phone" required></div>
-    <div class="form-group"><label>電郵</label><input type="email" name="email"></div>
-    <div class="form-group"><label>通訊軟體偏好</label>
-      <div class="radio-group">
-        <label><input type="radio" name="comm_app" value="WhatsApp"> WhatsApp</label>
-        <label><input type="radio" name="comm_app" value="WeChat"> WeChat</label>
-        <label><input type="radio" name="comm_app" value="僅短信"> 僅短信 (SMS)</label>
-      </div>
-    </div>
-    <div class="form-group"><label class="required-label">是否已登記為選民</label>
-      <div class="radio-group">
-        <label><input type="radio" name="is_voter" value="是" required> 是</label>
-        <label><input type="radio" name="is_voter" value="否"> 否</label>
-      </div>
-    </div>
-    
-    <div class="fee-notice">永遠入會會費100港元，<br>請前往秘書處繳付會費激活會員資格。<br></div>
-    <div class="fee-notice">如獲接納為僑港順德龍山同鄉會會員，本人願意接受及遵守貴會會章和所頒布的一切條款與通告。<br>
-    若本人退出貴會，本人願意交還會員證書及即時繳還一切欠付貴會之有關費用。</div>
-    
+
     <div class="form-group">
-      <div class="checkbox-group">
-        <label class="required-label"><input type="checkbox" name="declaration" required> 確認填寫資料屬實並同意入會條款</label>
+      <label class="required-label">身份證號碼/護照號碼</label>
+      <input type="text" name="id_passport" required>
+    </div>
+
+    <div class="form-group">
+      <label>籍貫</label>
+      <input type="text" name="native_country">
+    </div>
+
+    <div class="form-group">
+      <label>職業</label>
+      <input type="text" name="occupation">
+    </div>
+
+    <div class="form-group">
+      <label>婚姻狀況</label>
+      <input type="text" name="marital_status">
+    </div>
+
+    <div class="form-group">
+      <label class="required-label">地址</label>
+      <input type="text" name="address" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required-label">電話</label>
+      <input type="tel" name="phone" required>
+    </div>
+
+    <div class="form-group">
+      <label>電郵地址</label>
+      <input type="email" name="email">
+    </div>
+
+    <div class="form-group">
+      <label>常用通訊軟件 (如: WeChat / WhatsApp)</label>
+      <input type="text" name="comm_app">
+    </div>
+
+    <div class="form-group">
+      <label class="required-label">是否順德龍山區選民？</label>
+      <div style="display:flex; gap:30px; font-size: 20px;">
+        <label style="font-weight:normal;"><input type="radio" name="is_voter" value="是" required> 是</label>
+        <label style="font-weight:normal;"><input type="radio" name="is_voter" value="否"> 否</label>
       </div>
     </div>
 
-    <div class="form-group" id="signature-group">
+    <div class="form-group">
       <label class="required-label">本人簽署</label>
-      <div class="signature-pad-wrapper"><canvas id="sig-canvas"></canvas></div>
-      <button type="button" class="clear-btn" onclick="signaturePad.clear()">清除重寫</button>
+      <div class="signature-pad-wrapper">
+        <canvas id="sig-canvas"></canvas>
+      </div>
+      <div style="margin-top:15px; text-align:right;">
+        <button type="button" onclick="signaturePad.clear()" style="padding:8px 15px; background:#eee; border:1px solid #ccc; border-radius:4px; cursor:pointer;">清除並重簽</button>
+      </div>
       <input type="hidden" name="signature" id="signature">
     </div>
 
-    <div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 50px;">
-        <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">提交申請</button>
-        <div id="msg" style="margin-top: 15px; font-weight: bold; color: #666;"></div>
+    <div style="text-align: center; margin-top: 40px;">
+      <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">確認並提交</button>
+      <div id="msg" style="margin-top:15px; font-weight:bold; color: #9b3d2a;"></div>
     </div>
   </form>
 </div>
 
 <script>
+  // 初始化簽名板
   const canvas = document.getElementById('sig-canvas');
   const signaturePad = new SignaturePad(canvas);
-  
+
+  // 自動調整畫布解析度
   function resizeCanvas() {
     const ratio = Math.max(window.devicePixelRatio || 1, 1);
     canvas.width = canvas.offsetWidth * ratio;
@@ -140,49 +162,46 @@
     signaturePad.clear();
   }
   window.addEventListener("resize", resizeCanvas);
-  setTimeout(resizeCanvas, 500);
+  resizeCanvas();
 
-  // --- 新增：自動跳轉與閃爍處理函數 ---
+  // --- 新增：錯誤處理函數（跳轉 + 閃爍） ---
   function handleError(element, message) {
     alert(message);
-    // 找到最近的 form-group 父元素
     const group = element.closest('.form-group');
     if (group) {
         group.scrollIntoView({ behavior: 'smooth', block: 'center' });
         group.classList.add('flash-error');
-        // 3秒後移除閃爍樣式
         setTimeout(() => group.classList.remove('flash-error'), 3000);
     }
     element.focus();
   }
 
+  // --- 主提交邏輯 ---
   async function submitForm() {
     const form = document.getElementById('memberForm');
     const msg = document.getElementById('msg');
     const btn = document.getElementById('submitBtn');
 
-    // --- 補全：必填項手動驗證與跳轉閃爍 ---
-    const requiredInputs = form.querySelectorAll('[required]');
-    for (let input of requiredInputs) {
+    // 1. 必填項驗證
+    const requiredFields = form.querySelectorAll('[required]');
+    for (let field of requiredFields) {
         let isValid = true;
-        let fieldName = input.closest('.form-group').querySelector('label').innerText.replace(' *', '');
+        let fieldName = field.closest('.form-group').querySelector('label').innerText.replace(' *', '');
 
-        if (input.type === 'radio') {
-            const radioGroup = form.querySelectorAll(`input[name="${input.name}"]:checked`);
+        if (field.type === 'radio') {
+            const radioGroup = form.querySelectorAll(`input[name="${field.name}"]:checked`);
             if (radioGroup.length === 0) isValid = false;
-        } else if (input.type === 'checkbox') {
-            if (!input.checked) isValid = false;
-        } else {
-            if (!input.value.trim()) isValid = false;
+        } else if (field.value.trim() === "") {
+            isValid = false;
         }
 
         if (!isValid) {
-            handleError(input, `請填寫必填項目：${fieldName}`);
-            return; // 終止提交
+            handleError(field, `請填寫或選擇必填項目：${fieldName}`);
+            return;
         }
     }
 
-    // 驗證出生日期
+    // 2. 出生日期處理
     const y = document.getElementById('dob_y').value;
     const m = document.getElementById('dob_m').value;
     const d = document.getElementById('dob_d').value;
@@ -190,45 +209,61 @@
         handleError(document.getElementById('dob_y'), "請完整填寫出生日期（年、月、日）");
         return; 
     }
-    document.getElementById('dob_hidden').value = `${y}/${m}/${d}`;
+    document.getElementById('dob_hidden').value = `${y}-${m}-${d}`;
 
-    // 驗證簽名
+    // 3. 簽名處理
     if(signaturePad.isEmpty()) { 
         handleError(canvas, "請在簽名區完成簽署");
         return;
     }
     document.getElementById('signature').value = signaturePad.toDataURL();
 
-    // 通過驗證，開始提交
+    // 4. 準備提交
     btn.disabled = true;
-    msg.innerText = "提交中...";
+    msg.innerText = "正在進行雙重雲端備份...";
 
-    // 生成隨機會員號碼
+    // 生成隨機會員編號
     const now = new Date();
     const dateStr = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-    const memberId = "LS" + dateStr + randomSuffix;
+    const memberId = "LS" + dateStr + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('member_id_hidden').value = memberId;
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
+
+    // --- 雙備份目標地址 ---
+    const googleUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
+    const formspreeUrl = "https://formspree.io/f/xbddlnzr"; // 您的 Formspree 連結
+
+    // 同時啟動雙向提交
+    const googlePromise = fetch(googleUrl, {
+        method: 'POST',
+        body: new Blob([JSON.stringify(data)], {type: 'text/plain'}),
+        mode: 'no-cors'
+    });
+
+    const formspreePromise = fetch(formspreeUrl, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+    });
 
     try {
-        const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
-        await fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
+        // 等待兩邊都嘗試完成
+        await Promise.allSettled([googlePromise, formspreePromise]);
         
-        alert("歡迎加入龍山同鄉會" + "\n\n您的會員號碼為：" + memberId + "\n\n請及時前往秘書處繳付會費，以激活會員身份。");
+        alert("歡迎加入龍山同鄉會！\n\n您的臨時編號為：" + memberId + "\n\n系統已完成雙重備份。");
         form.reset();
         signaturePad.clear();
-        msg.innerText = "已提交成功。";
+        msg.innerText = "提交成功！";
     } catch (e) {
-        alert("提交出錯：" + e);
+        alert("提交時發生異常，請聯繫秘書處。");
         msg.innerText = "發生錯誤。";
     } finally {
         btn.disabled = false;
     }
   }
 </script>
+
 </body>
 </html>
