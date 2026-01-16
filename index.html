@@ -215,22 +215,22 @@
 
     // --- 最小化修改：雙路地址 ---
     const webAppUrl = \"https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec\";
-    const formspreeUrl = \"https://formspree.io/f/xbjnveze\";
+   //   const formspreeUrl = \"https://formspree.io/f/xbjnveze\";
 
-  //   try {
-   //      const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
-    //     await fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
-
-    try {
-        // 準備兩組請求
+     try {
         const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
+        await fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
+
+     // try {
+        // 準備兩組請求
+      //    const blob = new Blob([JSON.stringify(data)], {type: 'text/plain'});
         
-        const googleRequest = fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
-        const formspreeRequest = fetch(formspreeUrl, { 
-            method: 'POST', 
-            body: formData, 
-            headers: { 'Accept': 'application/json' } 
-        });
+       //   const googleRequest = fetch(webAppUrl, { method: 'POST', body: blob, mode: 'no-cors' });
+       //   const formspreeRequest = fetch(formspreeUrl, { 
+       //       method: 'POST', 
+       //       body: formData, 
+       //       headers: { 'Accept': 'application/json' } 
+       //   });
 
         // 同時執行，並等待兩邊都完成嘗試
         await Promise.allSettled([googleRequest, formspreeRequest]);
