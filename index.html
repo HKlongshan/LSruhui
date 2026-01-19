@@ -204,41 +204,48 @@
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // --- 關鍵修改：雙路備份邏輯 ---
+// --- 關鍵修改：雙路備份邏輯 ---
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
-    
-    // 請在這裡填入您在 web3forms.com 免費申請到的 Access Key
     const web3AccessKey = "454ef47b-204c-456f-8d7c-7df7fa6170db"; 
 
     try {
-        // 1. 發送到 Google (國際用戶)
+        // 1. 發送到 Google (維持原有格式，確保大陸以外用戶能進試算表)
         const googlePromise = fetch(webAppUrl, { 
             method: 'POST', 
             body: new Blob([JSON.stringify(data)], {type: 'text/plain'}), 
             mode: 'no-cors' 
         });
 
-        // 2. 發送到 Web3Forms (國內用戶備份，資料直接發進您的郵箱)
+        // 2. 發送到 Web3Forms (修正格式，確保國內用戶能通過郵件備份)
+        // 注意：這裡直接傳遞 JSON 對象，並明確 Headers
         const backupPromise = fetch("https://api.web3forms.com/submit", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
             body: JSON.stringify({
                 access_key: web3AccessKey,
-                subject: "【龍山同鄉會】新會員申請: " + data.name_zh,
-                from_name: "網站系統",
-                ...data
+                subject: "新會員申請: " + data.name_zh,
+                from_name: "龍山同鄉會系統",
+                ...data  // 這會展開所有表單欄位
             })
         });
 
-        // 並行發送，不論 Google 是否被牆，備份路徑都會嘗試執行
-        await Promise.allSettled([googlePromise, backupPromise]);
+        // 同時執行
+        const results = await Promise.allSettled([googlePromise, backupPromise]);
         
+        // 檢查 Web3Forms 是否成功 (開發檢查用)
+        console.log("Web3Forms Status:", results[1].status);
+
         alert("歡迎加入龍山同鄉會\n\n您的臨時會員號碼為：" + memberId + "\n\n申請已提交成功。");
         form.reset();
         signaturePad.clear();
         msg.innerText = "提交成功。";
+        
     } catch (e) {
-        alert("提交出現異常，請檢查網路。");
+        console.error("Submission Error:", e);
+        alert("提交過程出現問題，請重新嘗試。");
         msg.innerText = "發生錯誤。";
     } finally {
         btn.disabled = false;
