@@ -157,12 +157,11 @@
     const msg = document.getElementById('msg');
     const btn = document.getElementById('submitBtn');
 
-    // 必填項驗證
+    // --- 驗證邏輯：保持原樣，不做修改 ---
     const requiredInputs = form.querySelectorAll('[required]');
     for (let input of requiredInputs) {
         let isValid = true;
         let fieldName = input.closest('.form-group').querySelector('label').innerText.replace(' *', '');
-
         if (input.type === 'radio') {
             const radioGroup = form.querySelectorAll(`input[name="${input.name}"]:checked`);
             if (radioGroup.length === 0) isValid = false;
@@ -171,14 +170,12 @@
         } else {
             if (!input.value.trim()) isValid = false;
         }
-
         if (!isValid) {
             handleError(input, `請填寫必填項目：${fieldName}`);
             return;
         }
     }
 
-    // 驗證出生日期
     const y = document.getElementById('dob_y').value;
     const m = document.getElementById('dob_m').value;
     const d = document.getElementById('dob_d').value;
@@ -188,18 +185,16 @@
     }
     document.getElementById('dob_hidden').value = `${y}/${m}/${d}`;
 
-    // 驗證簽名
     if(signaturePad.isEmpty()) { 
         handleError(canvas, "請在簽名區完成簽署");
         return;
     }
     document.getElementById('signature').value = signaturePad.toDataURL();
 
-    // 開始提交
+    // 通過驗證，開始提交
     btn.disabled = true;
     msg.innerText = "提交中，請稍候...";
 
-    // 生成會員號碼
     const now = new Date();
     const dateStr = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
@@ -209,33 +204,41 @@
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // --- 關鍵修改：雙路並行提交 ---
+    // --- 關鍵修改：雙路備份邏輯 ---
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
-    const formspreeUrl = "https://formspree.io/f/xbddlnzr";
+    
+    // 請在這裡填入您在 web3forms.com 免費申請到的 Access Key
+    const web3AccessKey = "454ef47b-204c-456f-8d7c-7df7fa6170db"; 
 
     try {
-        // 同時向兩個地方發送請求
+        // 1. 發送到 Google (國際用戶)
         const googlePromise = fetch(webAppUrl, { 
             method: 'POST', 
             body: new Blob([JSON.stringify(data)], {type: 'text/plain'}), 
             mode: 'no-cors' 
         });
 
-        const formspreePromise = fetch(formspreeUrl, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
+        // 2. 發送到 Web3Forms (國內用戶備份，資料直接發進您的郵箱)
+        const backupPromise = fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+                access_key: web3AccessKey,
+                subject: "【龍山同鄉會】新會員申請: " + data.name_zh,
+                from_name: "網站系統",
+                ...data
+            })
         });
 
-        // 使用 Promise.allSettled 確保即便一邊被攔截(如Google)，另一邊也能嘗試完成
-        await Promise.allSettled([googlePromise, formspreePromise]);
+        // 並行發送，不論 Google 是否被牆，備份路徑都會嘗試執行
+        await Promise.allSettled([googlePromise, backupPromise]);
         
-        alert("歡迎加入龍山同鄉會\n\n您的會員號碼為：" + memberId + "\n\n數據已完成備份，請及時前往秘書處繳費激活會員身份。");
+        alert("歡迎加入龍山同鄉會\n\n您的臨時會員號碼為：" + memberId + "\n\n申請已提交成功。");
         form.reset();
         signaturePad.clear();
         msg.innerText = "提交成功。";
     } catch (e) {
-        alert("提交出現異常，請聯絡秘書處。錯誤資訊：" + e);
+        alert("提交出現異常，請檢查網路。");
         msg.innerText = "發生錯誤。";
     } finally {
         btn.disabled = false;
