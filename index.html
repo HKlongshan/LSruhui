@@ -221,15 +221,15 @@
             mode: 'no-cors' 
         });
 
-        const formspreePromise = fetch(formspreeUrl, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-        });
+  //      const formspreePromise = fetch(formspreeUrl, {
+    //        method: 'POST',
+   //         body: formData,
+   //         headers: { 'Accept': 'application/json' }
+  //      });
 
         // 使用 Promise.allSettled 確保即便一邊被攔截(如Google)，另一邊也能嘗試完成
-        await Promise.allSettled([googlePromise, formspreePromise]);
-        
+      //  await Promise.allSettled([googlePromise, formspreePromise]);
+        await Promise.allSettled([googlePromise]);
         alert("歡迎加入龍山同鄉會\n\n您的會員號碼為：" + memberId + "\n\n數據已完成備份，請及時前往秘書處繳費激活會員身份。");
         form.reset();
         signaturePad.clear();
