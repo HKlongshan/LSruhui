@@ -19,8 +19,8 @@
     label { font-size: 22px; display: block; margin-bottom: 10px; font-weight: 500;}
     .required-label:after { content: " *"; color: #d93025; font-size: 24px; }
     input[type="text"], input[type="tel"], input[type="email"], input[type="number"] { width: 100%; padding: 10px 0; border: none; border-bottom: 1px dotted #999; font-size: 20px; outline:none; }
-    .radio-group label, .checkbox-group label { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; cursor: pointer; width: 100%; font-weight: normal;}
-    .radio-group input, .checkbox-group input { margin-right: 15px; width: 26px; height: 26px; accent-color: #9b3d2a; flex-shrink: 0;}
+    .radio-group label, .checkbox-group label { font-size: 20px; margin-bottom: 15px; display: flex; align-items: flex-start; cursor: pointer; width: 100%; font-weight: normal; line-height: 1.4; }
+    .radio-group input, .checkbox-group input { margin-right: 15px; margin-top: 5px; width: 26px; height: 26px; accent-color: #9b3d2a; flex-shrink: 0;}
     .date-input-wrapper { display: flex; justify-content: space-between; align-items: center; }
     .date-box { text-align: center; width: 30%; }
     .date-box input { width: 100%; text-align: center; border: none; border-bottom: 1px solid #999; font-size: 20px; padding: 5px 0; }
@@ -103,18 +103,17 @@
       </div>
     </div>
     
-<div class="fee-notice">永遠入會會費100港元，<br>請前往秘書處繳付會費激活會員資格。<br></div>
-<div class="fee-notice">如獲接納為僑港順德龍山同鄉會會員，本人願意接受及遵守貴會會章和所頒布的一切條款與通告。<br>
-若本人退出貴會，本人願意交還會員證書及即時繳還一切欠付貴會之有關費用。<br>
-  
-<a href="https://longshan.xin/pp/" style="color: inherit; text-decoration: underline;">私隐政策</a></div>
+    <div class="fee-notice">永遠入會會費100港元，<br>請前往秘書處繳付會費激活會員資格。<br></div>
+    <div class="fee-notice">如獲接納為僑港順德龍山同鄉會會員，本人願意接受及遵守貴會會章和所頒布的一切條款與通告。<br>
+    若本人退出貴會，本人願意交還會員證書及即時繳還一切欠付貴會之有關費用。<br>
+    <a href="https://longshan.xin/pp/" target="_blank" style="color: inherit; text-decoration: underline;">私隐政策</a></div>
 
-<div class="form-group">
-  <div class="checkbox-group">
-    <label class="required-label"><input type="checkbox" name="declaration" required> 確認填寫資料屬實，同意入會條款和《<a href="https://longshan.xin/pp/" style="text-decoration: underline;">私隐政策</a>》。</label>
-  </div>
-</div>
-    
+    <div class="form-group">
+       <div class="checkbox-group">
+        <label class="required-label"><input type="checkbox" name="declaration" required><span>確認填寫資料屬實，同意入會條款和《<a href="https://longshan.xin/pp/" target="_blank" style="text-decoration: underline;">私隐政策</a>》。</span></label>
+       </div>
+    </div>
+
     <div class="form-group" id="signature-group">
       <label class="required-label">本人簽署</label>
       <div class="signature-pad-wrapper"><canvas id="sig-canvas"></canvas></div>
@@ -211,26 +210,16 @@
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // --- 關鍵修改：雙路並行提交 ---
+    // --- 關鍵修改：提交 ---
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzwYvy4t391KjK5CX8edd-pTCifijzXjoLFLzK8534JCl_SwrFrhqJD-a8zf-PEy_lM/exec";
-   // const formspreeUrl = "https://formspree.io/f/xbddlnzr";
 
     try {
-        // 同時向兩個地方發送請求
         const googlePromise = fetch(webAppUrl, { 
             method: 'POST', 
             body: new Blob([JSON.stringify(data)], {type: 'text/plain'}), 
             mode: 'no-cors' 
         });
 
-  //      const formspreePromise = fetch(formspreeUrl, {
-    //        method: 'POST',
-   //         body: formData,
-   //         headers: { 'Accept': 'application/json' }
-  //      });
-
-        // 使用 Promise.allSettled 確保即便一邊被攔截(如Google)，另一邊也能嘗試完成
-      //  await Promise.allSettled([googlePromise, formspreePromise]);
         await Promise.allSettled([googlePromise]);
         alert("歡迎加入龍山同鄉會\n\n您的會員號碼為：" + memberId + "\n\n數據已完成備份，請及時前往秘書處繳費激活會員身份。");
         form.reset();
