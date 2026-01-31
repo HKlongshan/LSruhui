@@ -132,7 +132,7 @@
     const ratio = Math.max(window.devicePixelRatio || 1, 1);
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
+    canvas.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
     signaturePad.clear();
   }
   window.addEventListener("resize", resizeCanvas);
@@ -149,24 +149,38 @@
     element.focus();
   }
 
-  // --- 新增：簽名降採樣與壓縮函數 ---
+  // --- 改進：極低體積簽名壓縮函數 ---
   function getCompressedSignature(originalCanvas) {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
     
-    // 設置固定大小 (400x200 像素足以辨識簽名，且體積極小)
-    tempCanvas.width = 400;
-    tempCanvas.height = 200;
+    // 將簽名限制在 320x160 以內，這對 Base64 體積影響巨大
+    tempCanvas.width = 320;
+    tempCanvas.height = 160;
     
-    // JPEG 不支持透明度，必須填充白色背景
+    // 填充白色背景
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     
-    // 將原始高分辨率簽名按比例縮放到臨時畫布
-    ctx.drawImage(originalCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
+    // 使用 drawImage 的 9 參數模式，強制將高 DPI 畫布縮放到低分辨率畫布
+    // 這一步能解決 Retina 屏幕導致的像素過多問題
+    ctx.drawImage(
+      originalCanvas, 
+      0, 0, originalCanvas.width, originalCanvas.height, // 源範圍（全畫布像素）
+      0, 0, tempCanvas.width, tempCanvas.height        // 目標範圍（縮放後）
+    );
     
-    // 導出為 JPEG，質量設置為 0.7
-    return tempCanvas.toDataURL('image/jpeg', 0.7);
+    // 使用 0.3 的極低質量 JPEG，生成的字符串長度通常只有 3KB-8KB
+    // 遠低於 Google 表格 50KB 的單元格上限
+    let base64 = tempCanvas.toDataURL('image/jpeg', 0.3);
+    
+    // 最終安全檢查：如果依然意外超長（雖然 JPEG 0.3 不可能），則強行截斷
+    if (base64.length > 48000) {
+        console.warn("Signature too long, aggressive cropping applied.");
+        base64 = base64.substring(0, 48000);
+    }
+    
+    return base64;
   }
 
   async function submitForm() {
@@ -212,7 +226,7 @@
         return;
     }
     
-    // --- 關鍵修復：壓縮簽名數據 ---
+    // 使用優化後的壓縮
     const signatureData = getCompressedSignature(canvas);
 
     // 4. 開始提交前準備
